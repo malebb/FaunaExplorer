@@ -10,6 +10,7 @@ set (GLAD_SRCS ${CMAKE_CURRENT_LIST_DIR}/glad/src/glad.c)
 file (GLOB INCL ${CMAKE_CURRENT_LIST_DIR}/incl)
 set (GLFW_INCL ${CMAKE_CURRENT_LIST_DIR}/glfw/include/)
 set (GLAD_INCL ${CMAKE_CURRENT_LIST_DIR}/glad/include/)
+set (GLM_INCL ${CMAKE_CURRENT_LIST_DIR}/glm/)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/shaders/default.vertex
     ${CMAKE_CURRENT_BINARY_DIR}/shaders/default.vertex COPYONLY)
@@ -23,4 +24,4 @@ add_executable (FaunaExplorer ${SRCS} ${GLAD_SRCS})
 
 target_link_libraries(FaunaExplorer PUBLIC glfw)
 
-target_include_directories(FaunaExplorer PUBLIC ${INCL} ${GLFW_INCL} ${GLAD_INCL})
+target_include_directories(FaunaExplorer PUBLIC ${INCL} ${GLFW_INCL} ${GLAD_INCL} ${GLM_INCL})
