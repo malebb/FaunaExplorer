@@ -9,6 +9,7 @@
 
 #include "Shader.h"
 #include "Texture.h"
+#include "Camera.h"
 #include "VBO.h"
 #include "VAO.h"
 
@@ -17,6 +18,14 @@
 
 unsigned int winWidth = 800;
 unsigned int winHeight = 600;
+
+float currentTime = 0.0f;
+float lastTime = 0.0f;
+float deltaTime = 0.0f;
+
+bool firstMouseMove = true;
+float lastX = winWidth / 2;
+float lastY = winHeight / 2;
 
 float cube[] = {
     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -62,6 +71,11 @@ float cube[] = {
     -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
+Camera camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
+
+void handleKeyboardInput(GLFWwindow* window);
+void handleMouseInput(GLFWwindow* window, double t_XPos, double t_YPos);
+
 int main(void)
 {
     GLFWwindow* window;
@@ -73,7 +87,7 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(winWidth, winHeight, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(winWidth, winHeight, "Fauna Explorer", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -87,6 +101,9 @@ int main(void)
     }
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, winWidth, winHeight);
+
+    glfwSetCursorPosCallback(window, handleMouseInput);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     Shader shader("./shaders/default.vertex", "./shaders/default.fragment");
     Texture brickTexture("./brick.jpg");
@@ -102,15 +119,19 @@ int main(void)
 
     while (!glfwWindowShouldClose(window))
     {
+        currentTime = glfwGetTime();
+        deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+
         glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(20.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        handleKeyboardInput(window);
 
-        glm::mat4 view = glm::mat4(1.0f);
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+
+        glm::mat4 view = camera.getViewMatrix();
         
          glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
         
@@ -134,4 +155,41 @@ int main(void)
 
     glfwTerminate();
     return 0;
+}
+
+void handleKeyboardInput(GLFWwindow* window)
+{
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.move(Direction::forward, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.move(Direction::backward, deltaTime);
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.move(Direction::left, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.move(Direction::right, deltaTime);
+     
+}
+
+void handleMouseInput(GLFWwindow* window, double t_XPos, double t_YPos)
+{
+    float xPos = static_cast<float>(t_XPos);
+    float yPos = static_cast<float>(t_YPos);
+
+    if (firstMouseMove)
+    {
+        lastX = xPos;
+        lastY = yPos;
+        firstMouseMove = false;
+    }
+
+    float XOffset = (xPos - lastX);
+    float YOffset = (lastY - yPos);
+
+    lastX = xPos;
+    lastY = yPos;
+
+    camera.lookAround(XOffset, YOffset);
 }

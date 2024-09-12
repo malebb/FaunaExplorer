@@ -6,7 +6,9 @@
 
 class VAO
 {
+
 public:
+
 	VAO();
 	void bind() const;
 	void unbind() const;
@@ -14,5 +16,7 @@ public:
 	void deleteBuf() const;
 
 private:
+
 	GLuint m_id;
+
 };
