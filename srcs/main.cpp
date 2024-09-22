@@ -11,7 +11,7 @@
 #include "Texture.h"
 #include "Camera.h"
 #include "VBO.h"
-#include "VAO.h"
+#include "Model.h"
 
 #include <fstream>
 #include "stb_image.h"
@@ -106,16 +106,7 @@ int main(void)
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     Shader shader("./shaders/default.vertex", "./shaders/default.fragment");
-    Texture brickTexture("./brick.jpg");
-
-    VAO vao1;
-    vao1.bind();
-
-    VBO vbo1(cube, sizeof(cube));
-    vao1.linkVBO(vbo1);
-
-    vao1.unbind();
-    vbo1.unbind();
+    Model dog("./models/cube.obj");
 
     while (!glfwWindowShouldClose(window))
     {
@@ -130,6 +121,7 @@ int main(void)
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(static_cast<float>(glfwGetTime()) * 25), glm::vec3(0.0f, 1.0f, 0.0f));
 
         glm::mat4 view = camera.getViewMatrix();
         
@@ -140,17 +132,13 @@ int main(void)
         shader.setMat4("view", view);
         shader.setMat4("projection", projection);
 
-
-        vao1.bind();
-        brickTexture.use();
-        
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        dog.draw(shader);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    vao1.deleteBuf();
-    vbo1.deleteBuf();
+    //vao1.deleteBuf();
+    //vbo1.deleteBuf();
     shader.deleteProgram();
 
     glfwTerminate();

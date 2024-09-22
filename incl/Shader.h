@@ -16,6 +16,7 @@ public:
 	void use() const;
 	void deleteProgram() const;
 	void setMat4(const std::string& t_name, glm::mat4& t_mat);
+	void setInt(const std::string& t_name, GLint t_value);
 
 private:
 

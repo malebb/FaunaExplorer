@@ -86,3 +86,9 @@ void Shader::setMat4(const std::string& t_name, glm::mat4& t_mat)
 	GLint location = glGetUniformLocation(m_id, t_name.c_str());
 	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(t_mat));
 }
+
+void Shader::setInt(const std::string& t_name, GLint t_value)
+{
+	GLint location = glGetUniformLocation(m_id, t_name.c_str());
+	glUniform1i(location, t_value);
+}

@@ -2,12 +2,12 @@
 
 #include "glad/glad.h"
 
-class VBO
+class EBO
 {
 
 public:
-	VBO();
-	VBO(void* t_vertices, GLuint t_size);
+	EBO();
+	EBO(void* t_indices, GLuint t_size);
 	void bind() const;
 	void unbind() const;
 	void deleteBuf() const;

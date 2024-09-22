@@ -4,9 +4,9 @@ in vec2 texCoord;
 
 out vec4 aColor;
 
-uniform sampler2D tex;
+uniform sampler2D texture_diffuse1;
 
 void main()
 {
-	aColor = texture(tex, texCoord);
+	aColor = texture(texture_diffuse1, texCoord);
 }
